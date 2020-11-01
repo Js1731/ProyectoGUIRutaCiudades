@@ -4,6 +4,8 @@ import java.awt.Toolkit;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 
+import proy2.Paneles.Areas.PanelPrincipal;
+
 public class App {
     public static void main( String[] args ){
 
@@ -12,11 +14,11 @@ public class App {
         JFrame Ventana = new JFrame();
         Control.Ventana = Ventana;
         
-        Ventana.setSize(1000,700);
+        Ventana.setSize(Control.VentTam.x,Control.VentTam.y);
         Ventana.setUndecorated(true);
-        Ventana.setLocation(Pantalla.width/2 - 1000/2, Pantalla.height/2 - 350);
+        Ventana.setLocation(Pantalla.width/2 - Control.VentTam.x/2, Pantalla.height/2 - Control.VentTam.y/2);
         Ventana.setVisible(true);
-        Ventana.add(Control.PanelP = new PanelPrinc());
+        Ventana.add(new PanelPrincipal());
         Ventana.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 }

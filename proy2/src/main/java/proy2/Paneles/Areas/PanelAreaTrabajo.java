@@ -1,4 +1,5 @@
-package proy2;
+package proy2.Paneles.Areas;
+
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Graphics;
@@ -7,8 +8,13 @@ import java.util.Arrays;
 
 import javax.swing.JPanel;
 
-public class PanelPrinc extends JPanel{
-    
+import proy2.Paneles.Componentes.Camino;
+import proy2.Ciudad;
+import proy2.Control;
+import proy2.MatrizDin;
+
+public class PanelAreaTrabajo extends JPanel{
+        
     ArrayList<ArrayList<Ciudad>> Caminos = new ArrayList<ArrayList<Ciudad>>();
     ArrayList<Ciudad> Ciudades = new ArrayList<Ciudad>();
     MatrizDin MatrizAdj = new MatrizDin();
@@ -16,12 +22,10 @@ public class PanelPrinc extends JPanel{
     MatrizDin MatrizCamMin = new MatrizDin();
     final int INF = 10000;
 
-    public PanelPrinc(){
-
-        
+    public PanelAreaTrabajo(){
 
         setLayout(null);
-        setBounds(0, 0, 1000, 1000);
+        setBounds(485, 0, 635, 700);
         setBackground(Color.darkGray);
 
         agregarCiudad("Panama", 50,50);
@@ -179,5 +183,5 @@ public class PanelPrinc extends JPanel{
         }
 
         return Camino;
-    }
+    }  
 }

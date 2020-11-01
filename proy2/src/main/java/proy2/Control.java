@@ -1,12 +1,17 @@
 package proy2;
 
+import java.awt.Point;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import proy2.Paneles.Areas.PanelAreaTrabajo;
+
 public class Control {
 
+    public static Point VentTam = new Point(1100, 700);
+
     public static JFrame Ventana;
-    public static PanelPrinc PanelP;
+    public static PanelAreaTrabajo AreaTrabajo;
 
     public static final int ESTNORMAL = 0;
     public static final int ESTCONECT = 1;

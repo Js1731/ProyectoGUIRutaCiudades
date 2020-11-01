@@ -1,10 +1,12 @@
-package proy2;
+package proy2.Paneles.Componentes;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import proy2.Ciudad;
 
 public class Camino extends JPanel{
     

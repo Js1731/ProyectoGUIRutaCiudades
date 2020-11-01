@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
+import proy2.Paneles.Componentes.Camino;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -53,7 +54,7 @@ public class Ciudad extends JPanel implements MouseInputListener {
         }else if(e.getButton() == MouseEvent.BUTTON3){
             //Control.PanelP.eliminarCiudad(this);
             if(Control.ESTADO == Control.ESTCONECT){
-                Control.PanelP.conectarCiudades(Control.CiudadIni, this, 5);
+                Control.AreaTrabajo.conectarCiudades(Control.CiudadIni, this, 5);
                 Control.CiudadIni = null;
                 Control.ESTADO = Control.ESTNORMAL;
                 Control.Ventana.repaint();
