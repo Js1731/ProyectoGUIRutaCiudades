@@ -52,7 +52,8 @@ public class Ciudad extends JPanel implements MouseInputListener {
             System.out.println(getLocation().x);
             System.out.println(PDif.x);
         }else if(e.getButton() == MouseEvent.BUTTON3){
-            //Control.PanelP.eliminarCiudad(this);
+            Control.AreaTrabajo.eliminarCiudad(this);
+            /*
             if(Control.ESTADO == Control.ESTCONECT){
                 Control.AreaTrabajo.conectarCiudades(Control.CiudadIni, this, 5);
                 Control.CiudadIni = null;
@@ -61,7 +62,7 @@ public class Ciudad extends JPanel implements MouseInputListener {
             }else{
                 Control.CiudadIni = this;
                 Control.ESTADO = Control.ESTCONECT;
-            }
+            }*/
         }
     }
 

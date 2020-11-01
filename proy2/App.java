@@ -14,11 +14,13 @@ public class App {
         JFrame Ventana = new JFrame();
         Control.Ventana = Ventana;
         
+        Ventana.add(new PanelPrincipal());
         Ventana.setSize(Control.VentTam.x,Control.VentTam.y);
         Ventana.setUndecorated(true);
         Ventana.setLocation(Pantalla.width/2 - Control.VentTam.x/2, Pantalla.height/2 - Control.VentTam.y/2);
         Ventana.setVisible(true);
-        Ventana.add(new PanelPrincipal());
+        
         Ventana.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        
     }
 }

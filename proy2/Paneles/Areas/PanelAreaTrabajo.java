@@ -33,6 +33,8 @@ public class PanelAreaTrabajo extends JPanel{
         agregarCiudad("Herrera", 200,50);
         agregarCiudad("Colon", 50,400);
         agregarCiudad("Cocle", 100,300);
+        agregarCiudad("Los Santos", 200,500);
+        agregarCiudad("Panama Oeste", 700,500);
 
 
         conectarCiudades(Ciudades.get(0), Ciudades.get(1), 2);
@@ -69,6 +71,10 @@ public class PanelAreaTrabajo extends JPanel{
 
         Ciudades.remove(Ci);
         remove(Ci);
+        Control.PanPrinc.MatrizAdy.actualizar();
+        Control.PanPrinc.MatrizDist.actualizar();
+        Control.PanPrinc.MatrizCamMin.actualizar();
+
         Control.Ventana.repaint();
     }
 
@@ -83,6 +89,7 @@ public class PanelAreaTrabajo extends JPanel{
         MatrizDist.editarMatriz(MatrizDist.Ancho - 1, MatrizDist.Alto - 1, 0);
 
         return Ci;
+
     }
 
     public void conectarCiudades(Ciudad Or, Ciudad Fin, int Dist){
