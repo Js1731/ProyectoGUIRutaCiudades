@@ -27,6 +27,12 @@ public class MatrizDin {
         Alto = alto;
     }
 
+    public void borrarMatriz(){
+        Valores.removeAll(Valores);
+        Alto = 0;
+        Ancho = 0;
+    }
+
     public int celda(int posx, int posy){
         return Valores.get(posy * Ancho + posx);
     }

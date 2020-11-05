@@ -1,39 +1,46 @@
 package proy2.Paneles.Componentes;
 
+
 import java.awt.Color;
 import java.awt.Graphics;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import proy2.Ciudad;
+import proy2.Control;
 
+@SuppressWarnings(value = "serial")
 public class Camino extends JPanel{
     
-    Ciudad Origen, Final;
-    int Distancia = 0;
+    private Ciudad CiudadOr;
+    private Ciudad CiudadFin;
+    private int Distancia = 0;
+    private JLabel LbDist;
     
     public Camino(Ciudad Or, Ciudad Fin, int D){
         setLayout(null);
-        int a = 0;
-        Origen = Or;
-        Final = Fin;
+
+        CiudadOr = Or;
+        CiudadFin = Fin;
         Distancia = D;
-        int IntX = (Or.getLocation().x + Fin.getLocation().x + Ciudad.Tam.x)/2;
-        int IntY = (Or.getLocation().y + Fin.getLocation().y + Ciudad.Tam.x)/2;
+
+        //POSICION DEL PANEL
+        int IntX = (CiudadOr.getLocation().x + CiudadFin.getLocation().x + Control.CiudadTam)/2;
+        int IntY = (CiudadOr.getLocation().y + CiudadFin.getLocation().y + Control.CiudadTam)/2;
         setBounds(IntX, IntY, 30, 30);
 
-        JLabel LbDist = new JLabel(""+Distancia);
+        //INICIAR LABEL
+        LbDist = new JLabel(""+Distancia);
         LbDist.setBounds(0,0,30,30);
-        LbDist.setForeground(Color.WHITE);
+        LbDist.setForeground(Color.BLACK);
         add(LbDist);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        
-        int IntX = (Origen.getLocation().x + Final.getLocation().x + Ciudad.Tam.x)/2;
-        int IntY = (Origen.getLocation().y + Final.getLocation().y + Ciudad.Tam.x)/2;
+
+        int IntX = (CiudadOr.getLocation().x + CiudadFin.getLocation().x + Control.CiudadTam)/2;
+        int IntY = (CiudadOr.getLocation().y + CiudadFin.getLocation().y + Control.CiudadTam)/2;
         setBounds(IntX, IntY, 30, 30);
 
     }

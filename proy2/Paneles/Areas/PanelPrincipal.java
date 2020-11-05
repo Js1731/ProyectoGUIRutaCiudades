@@ -2,88 +2,182 @@ package proy2.Paneles.Areas;
 
 import javax.swing.JPanel;
 
-import java.awt.CardLayout;
 import java.awt.event.MouseEvent;
+import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import proy2.Control;
 import proy2.Paneles.Componentes.BtnCintaOp;
 import proy2.Paneles.Componentes.BtnTab;
 
+@SuppressWarnings(value = "serial")
 public class PanelPrincipal extends JPanel{
 
-    public PanelMatriz MatrizAdy;
-    public PanelMatriz MatrizDist;
-    public PanelMatriz MatrizCamMin;
-    CardLayout ContExpo = new CardLayout();
-    JPanel Expositor = new JPanel();
+    private BtnTab TabAdy, TabDis, TabCam;
+    private BtnCintaOp Agregar, Conectar, Borrar, Normal, Buscar;
+    public PanelNomCiudad PnNomCiu = new PanelNomCiudad(0, 0);
+    public PanelDistCiudad PnDisCiu = new PanelDistCiudad(0, 0);
 
-    public PanelPrincipal(){
+    public PanelPrincipal() {
         setLayout(null);
         setBounds(0, 0, Control.VentTam.x, Control.VentTam.y);
+
         Control.PanPrinc = this;
 
+        add(PnNomCiu);
+        add(PnDisCiu);
         
-        BtnCintaOp Agregar = new BtnCintaOp(500, 100){
+
+        // BOTONES DE LA CINTA DE OPCIONES
+
+        Agregar = new BtnCintaOp(700, 620, Control.BtnAgregar0, Control.BtnAgregar1) {
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
 
-                System.out.println("Opcion 1");
+                cambiar_Op(this);
+                Control.ESTADO = Control.ESTAGREGAR;
+                Control.CiudadAux = null;
+                System.out.println("Estado actual : " + Control.ESTADO);
             }
         };
 
         add(Agregar);
 
+        Conectar = new BtnCintaOp(750, 620, Control.BtnConect0, Control.BtnConect1) {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
 
+                cambiar_Op(this);
+                Control.CiudadAux = null;
+                Control.ESTADO = Control.ESTCONECT;
+                System.out.println("Estado actual : " + Control.ESTADO);
+            }
+        };
+
+        add(Conectar);
+
+        Borrar = new BtnCintaOp(800, 620, Control.BtnBorrar0, Control.BtnBorrar1) {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+
+                cambiar_Op(this);
+
+                Control.CiudadAux = null;
+                Control.ESTADO = Control.ESTBORRAR;
+                System.out.println("Estado actual : " + Control.ESTADO);
+            }
+        };
+
+        add(Borrar);
+
+        Buscar = new BtnCintaOp(610, 620, Control.BtnBuscar0, Control.BtnBuscar1) {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+
+                cambiar_Op(this);
+
+                Control.CiudadAux = null;
+                Control.ESTADO = Control.ESTBUSCAR;
+                System.out.println("Estado actual : " + Control.ESTADO);
+            }
+        };
+
+        add(Buscar);
+
+        // BOTONES DE LA CINTA DE OPCIONES
+
+        Normal = new BtnCintaOp(880, 620, Control.BtnAgregar0, Control.BtnAgregar1) {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+
+                cambiar_Op(this);
+                Control.ESTADO = Control.ESTNORMAL;
+                Control.CiudadAux = null;
+                System.out.println("Estado actual : " + Control.ESTADO);
+            }
+        };
+
+        add(Normal);
+
+        // PANELES SECUNDARIOS
         add(Control.AreaTrabajo = new PanelAreaTrabajo());
+        add(Control.Expositor = new PanelExpositor());
+
+        /// PESTANAS PARA SELECCIONAR TABLAS
 
 
-        
-        
-        MatrizAdy = new PanelMatriz(Control.AreaTrabajo.MatrizAdj, Control.AreaTrabajo.Ciudades);
-        MatrizDist = new PanelMatriz(Control.AreaTrabajo.MatrizDist, Control.AreaTrabajo.Ciudades);
-        MatrizCamMin = new PanelMatriz(Control.AreaTrabajo.MatrizCamMin, Control.AreaTrabajo.Ciudades);
-        
-        
-        Expositor.setBounds(37, 287, Control.AreaTrabajo.MatrizAdj.Ancho * 50, Control.AreaTrabajo.MatrizAdj.Alto * 50);
-        Expositor.setLayout(ContExpo);
-        Expositor.add( MatrizAdy, "Matriz 1");
-        Expositor.add( MatrizDist, "Matriz 2");
-        Expositor.add( MatrizCamMin, "Matriz 3");
-        ContExpo.show(Expositor, "Matriz 1");
-        add(Expositor);
 
-        BtnTab TabAdy = new BtnTab("Adyacencia", 50, 200, 100, 50){
+        TabAdy = new BtnTab("Adyacencia", 37, 250, 130, 50) {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                Control.PanPrinc.ContExpo.show(Expositor, "Matriz 1");
-                Control.PanPrinc.Expositor.setBounds(37, 287, Control.AreaTrabajo.MatrizAdj.Ancho * 50, Control.AreaTrabajo.MatrizAdj.Alto * 50);
+                cambiar_tab(PanelExpositor.MATADY, this);
             }
         };
         add(TabAdy);
+        TabAdy.Estado = TabAdy.EstSel;
 
-        BtnTab TabDis = new BtnTab("Distancia", 210, 200, 100, 50){
+        TabDis = new BtnTab("Distancia", 172, 250, 100, 50) {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                Control.PanPrinc.ContExpo.show(Expositor, "Matriz 2");
-                Control.PanPrinc.Expositor.setBounds(37, 287, Control.AreaTrabajo.MatrizAdj.Ancho * 50, Control.AreaTrabajo.MatrizAdj.Alto * 50);
+                cambiar_tab(PanelExpositor.MATDIS, this);
             }
         };
         add(TabDis);
 
-        BtnTab TabCamMin = new BtnTab("Camino Minimo", 370, 200, 100, 50){
+        TabCam = new BtnTab("Camino Minimo", 277, 250, 160, 50) {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                Control.PanPrinc.ContExpo.show(Expositor, "Matriz 3");
-                Control.PanPrinc.Expositor.setBounds(37, 287, Control.AreaTrabajo.MatrizAdj.Ancho * 50, Control.AreaTrabajo.MatrizAdj.Alto * 50);
+                cambiar_tab(PanelExpositor.MATCAM, this);
             }
         };
-        add(TabCamMin);
-        
+        add(TabCam);
 
-    
     }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.drawImage(Control.ImFondo, 0, 0, this);
+    }
+
+    public void cambiar_tab(String TabIndex, BtnTab Tab){
+        Control.Expositor._cambiar_matriz(TabIndex);
+        
+        TabAdy.Estado = TabAdy.EsNorm;
+        TabAdy.repaint();
+        TabDis.Estado = Tab.EsNorm;
+        TabDis.repaint();
+        TabCam.Estado = Tab.EsNorm;
+        TabCam.repaint();
+
+        Tab.Estado = Tab.EstSel;
+        Tab.repaint();
+    }
+
+    public void cambiar_Op(BtnCintaOp Tab){
+        
+        Agregar.Select = false;
+        Agregar.repaint();
+        Conectar.Select = false;
+        Conectar.repaint();
+        Borrar.Select = false;
+        Borrar.repaint();
+        Buscar.Select = false;
+        Buscar.repaint();
+        Normal.Select = false;
+        Normal.repaint();
+
+        Tab.Select = true;
+        Tab.repaint();
+    }
+
 }

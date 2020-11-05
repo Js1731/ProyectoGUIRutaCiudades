@@ -1,29 +1,81 @@
 package proy2;
 
 import java.awt.Point;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+
+import proy2.Paneles.Componentes.Ciudad;
 import proy2.Paneles.Areas.PanelAreaTrabajo;
+import proy2.Paneles.Areas.PanelExpositor;
 import proy2.Paneles.Areas.PanelPrincipal;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.awt.Color;
+import java.awt.Font;
 
 public class Control {
 
+    public static final int INF = 10000;
+    public static final int CiudadTam = 50;
+
     public static Point VentTam = new Point(1100, 700);
 
+    public static PanelExpositor Expositor;
     public static JFrame Ventana;
     public static PanelAreaTrabajo AreaTrabajo;
     public static PanelPrincipal PanPrinc;
 
     public static final int ESTNORMAL = 0;
     public static final int ESTCONECT = 1;
+    public static final int ESTBORRAR = 2;
+    public static final int ESTBUSCAR = 3;
+    public static final int ESTAGREGAR = 4;
+
+    public static final Font TextoTab = new Font("Arial", Font.BOLD, 20);
+
+    public static final Color ColNaranja = new Color(203, 108, 53, 255);
+    public static final Color ColMorado = new Color(110, 106, 164, 255);
+
     public static int ESTADO = ESTNORMAL;
 
-    public static Ciudad CiudadIni;
-    public static Ciudad CiudadFin;
+    public static Ciudad CiudadAux;
 
-    public static void actualizarTablas(){
+    public static BufferedImage ImFondo;
+    public static BufferedImage ImCiudad;
 
+    public static BufferedImage BtnAgregar0;
+    public static BufferedImage BtnAgregar1;
+
+    public static BufferedImage BtnBorrar0;
+    public static BufferedImage BtnBorrar1;
+
+    public static BufferedImage BtnConect0;
+    public static BufferedImage BtnConect1;
+
+    public static BufferedImage BtnBuscar0;
+    public static BufferedImage BtnBuscar1;
+
+
+    public Control(){
+        try{
+            ImFondo = ImageIO.read(new File("proy2/Paneles/resources/Fondo.png"));
+            ImCiudad = ImageIO.read(new File("proy2/Paneles/resources/Ciudad.png"));
+
+            BtnAgregar0 = ImageIO.read(new File("proy2/Paneles/resources/BtnAgregar0.png"));
+            BtnAgregar1 = ImageIO.read(new File("proy2/Paneles/resources/BtnAgregar1.png"));
+
+            BtnBorrar0 = ImageIO.read(new File("proy2/Paneles/resources/BtnBorrar0.png"));
+            BtnBorrar1 = ImageIO.read(new File("proy2/Paneles/resources/BtnBorrar1.png"));
+
+            BtnConect0 = ImageIO.read(new File("proy2/Paneles/resources/BtnConect0.png"));
+            BtnConect1 = ImageIO.read(new File("proy2/Paneles/resources/BtnConect1.png"));
+
+            BtnBuscar0 = ImageIO.read(new File("proy2/Paneles/resources/BtnBuscar0.png"));
+            BtnBuscar1 = ImageIO.read(new File("proy2/Paneles/resources/BtnBuscar1.png"));
+        }catch(Exception e){
+            System.out.println("NO SE CARGARON LAS IMAGENES");
+        }
     }
     
 }

@@ -3,153 +3,161 @@ package proy2.Paneles.Areas;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.BasicStroke;
+
 
 import javax.swing.JPanel;
 
-import proy2.Paneles.Componentes.Camino;
-import proy2.Ciudad;
+import proy2.Paneles.Componentes.*;
 import proy2.Control;
 import proy2.MatrizDin;
 
-public class PanelAreaTrabajo extends JPanel{
-        
-    ArrayList<ArrayList<Ciudad>> Caminos = new ArrayList<ArrayList<Ciudad>>();
-    ArrayList<Ciudad> Ciudades = new ArrayList<Ciudad>();
-    MatrizDin MatrizAdj = new MatrizDin();
-    MatrizDin MatrizDist = new MatrizDin();
-    MatrizDin MatrizCamMin = new MatrizDin();
-    final int INF = 10000;
+@SuppressWarnings(value = "serial")
+public class PanelAreaTrabajo extends JPanel implements MouseListener {
 
-    public PanelAreaTrabajo(){
+    public ArrayList<Ciudad> Caminos = new ArrayList<Ciudad>();
+    public ArrayList<Ciudad> Ciudades = new ArrayList<Ciudad>();
+    public MatrizDin MatrizAdj = new MatrizDin();
+    public MatrizDin MatrizDist = new MatrizDin();
+    public MatrizDin MatrizCamMin = new MatrizDin();
+    public MatrizDin MatrizCamDijkstra = new MatrizDin();
+    public ArrayList<Ciudad> NodosVer = new ArrayList<Ciudad>();
+    private int Index = 0;
+
+    public PanelAreaTrabajo() {
 
         setLayout(null);
         setBounds(485, 0, 635, 700);
-        setBackground(Color.darkGray);
+        setOpaque(false);
 
-        agregarCiudad("Panama", 50,50);
-        agregarCiudad("Chiriqui", 100,100);
-        agregarCiudad("Herrera", 200,50);
-        agregarCiudad("Colon", 50,400);
-        agregarCiudad("Cocle", 100,300);
-        agregarCiudad("Los Santos", 200,500);
-        agregarCiudad("Panama Oeste", 700,500);
+        addMouseListener(this);
 
+        MatrizCamDijkstra.editarMatriz(1, 4, 0);
+        MatrizCamDijkstra.rellenarColumna(0, Control.INF);
 
-        conectarCiudades(Ciudades.get(0), Ciudades.get(1), 2);
-        conectarCiudades(Ciudades.get(2), Ciudades.get(1), 2);
-        conectarCiudades(Ciudades.get(0), Ciudades.get(2), 10);
-        conectarCiudades(Ciudades.get(0), Ciudades.get(3), 10);
-        conectarCiudades(Ciudades.get(4), Ciudades.get(0), 10);
-        
-        //eliminarCiudad(Ciudades.get(1));
-
-        //Caminos.add(new ArrayList<Ciudad>(Arrays.asList(C1, C2, C3)));
-        generarMatrizAnj();
         buscarCaminosMinimos();
-        Caminos.add(buscarCaminoDijsktra(3, 2));
     }
 
-    public void eliminarCiudad(Ciudad Ci){
+    public void eliminarCiudad(Ciudad Ci) {
         int ind = Ciudades.indexOf(Ci);
-        
+
+        // ELIMINAR CIUDAD DE LAS MATRICES
         MatrizAdj.eliminarColumna(ind);
         MatrizAdj.eliminarFila(ind);
-        
+
         MatrizCamMin.eliminarColumna(ind);
         MatrizCamMin.eliminarFila(ind);
 
         MatrizDist.eliminarColumna(ind);
         MatrizDist.eliminarFila(ind);
 
-        for (Ciudad Vec: Ci.Caminos.keySet()){
+        // ELIMINAR CAMINOS CON OTRAS CIUDADES
+        for (Ciudad Vec : Ci.Caminos.keySet()) {
             remove(Ci.Caminos.get(Vec));
             Vec.Caminos.remove(Ci);
-            Vec.Relaciones.remove(Ci);
         }
+
+        Caminos = null;
 
         Ciudades.remove(Ci);
         remove(Ci);
-        Control.PanPrinc.MatrizAdy.actualizar();
-        Control.PanPrinc.MatrizDist.actualizar();
-        Control.PanPrinc.MatrizCamMin.actualizar();
 
+        buscarCaminosMinimos();
+
+        // ACTUALIZAR MATRICES
+        Control.Expositor._actualizar_matrices();
         Control.Ventana.repaint();
     }
 
-    public Ciudad agregarCiudad(String Nombre, int Px, int Py){
+    public Ciudad agregarCiudad(String Nombre, int Px, int Py) {
         Ciudad Ci = new Ciudad(Px, Py, Nombre);
-        Ciudades.add(Ci);
-        add(Ci);
+
+        // AGREGAR CIUDAD A MATRICES
+        MatrizAdj.agregarColumna();
+        MatrizAdj.agregarFila();
+
         MatrizDist.agregarColumna();
         MatrizDist.agregarFila();
-        MatrizDist.rellenarColumna(MatrizDist.Ancho - 1, INF);
-        MatrizDist.rellenarFila(MatrizDist.Alto - 1, INF);
+
+        MatrizCamMin.agregarColumna();
+        MatrizCamMin.agregarFila();
+
+        MatrizDist.rellenarColumna(MatrizDist.Ancho - 1, Control.INF);
+        MatrizDist.rellenarFila(MatrizDist.Alto - 1, Control.INF);
+
         MatrizDist.editarMatriz(MatrizDist.Ancho - 1, MatrizDist.Alto - 1, 0);
 
+        buscarCaminosMinimos();
+        Ciudades.add(Ci);
+        add(Ci);
+        Control.Expositor._actualizar_matrices();
         return Ci;
-
     }
 
-    public void conectarCiudades(Ciudad Or, Ciudad Fin, int Dist){
-        Or.Relaciones.add(Fin);
-        Fin.Relaciones.add(Or);
+    public void conectarCiudades(Ciudad Or, Ciudad Fin, int Dist) {
+        Camino Cm = new Camino(Or, Fin, Dist);
+        Or.Caminos.put(Fin, Cm);
+        Fin.Caminos.put(Or, Cm);
+
+        MatrizAdj.editarMatriz(Ciudades.indexOf(Or), Ciudades.indexOf(Fin), 1);
+        MatrizAdj.editarMatriz(Ciudades.indexOf(Fin), Ciudades.indexOf(Or), 1);
 
         MatrizDist.editarMatriz(Ciudades.indexOf(Or), Ciudades.indexOf(Fin), Dist);
         MatrizDist.editarMatriz(Ciudades.indexOf(Fin), Ciudades.indexOf(Or), Dist);
 
+        buscarCaminosMinimos();
 
-        Camino Cm = new Camino(Or, Fin, Dist);
-        Or.Caminos.put(Fin, Cm);
-        Fin.Caminos.put(Or, Cm);
+        Control.Expositor._actualizar_matrices();
         add(Cm);
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+
+        //MEJORAR RESOLUCION DE FORMAS
+        RenderingHints qualityHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        qualityHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        Graphics2D g2 = (Graphics2D)g.create();
+
+        g2.setRenderingHints(qualityHints);
+        g2.setStroke(new BasicStroke(10));
+
+
+        // DIBUJAR CONEXIONES
         for (Ciudad ciu : Ciudades) {
-            Point PI = ciu.getLocation();
-            for (Ciudad ciuVec : ciu.Relaciones) {
-                Point PF = ciuVec.getLocation();
-                g.setColor(Color.BLACK);
-                g.drawLine(PI.x + Ciudad.Tam.x/2, PI.y + Ciudad.Tam.y/2, PF.x + Ciudad.Tam.x/2, PF.y + Ciudad.Tam.y/2);
+            Point PIni = ciu.getLocation();
+            for (Ciudad ciuVec : ciu.Caminos.keySet()) {
+                Point PFin = ciuVec.getLocation();
+                g2.setColor(Control.ColNaranja);
+                g2.drawLine(PIni.x + Control.CiudadTam / 2, PIni.y + Control.CiudadTam / 2 + 10,
+                        PFin.x + Control.CiudadTam / 2, PFin.y + Control.CiudadTam / 2 + 10);
             }
         }
 
-        for (ArrayList<Ciudad> arrayList : Caminos) {
+        if(Caminos != null){
+            int PuntosX[] = new int[Caminos.size()];
+            int PuntosY[] = new int[Caminos.size()];
 
-            int PuntosX[] = new int[arrayList.size()];
-            int PuntosY[] = new int[arrayList.size()];
-            
-            for (int i = 0; i < arrayList.size(); i++) {
-                Point PosCiudad = arrayList.get(i).getLocation();
-                PuntosX[i] = PosCiudad.x + Ciudad.Tam.x/2;
-                PuntosY[i] = PosCiudad.y + Ciudad.Tam.x/2;
-                
+            for (int i = 0; i < Caminos.size(); i++) {
+                Point PosCiudad = Caminos.get(i).getLocation();
+                PuntosX[i] = PosCiudad.x + Control.CiudadTam / 2;
+                PuntosY[i] = PosCiudad.y + Control.CiudadTam / 2 + 10;
             }
-            g.setColor(Color.CYAN);
-            g.drawPolyline(PuntosX, PuntosY, arrayList.size());
+
+            g2.setColor(Color.CYAN);
+            g2.drawPolyline(PuntosX, PuntosY, Caminos.size());
         }
 
     }
 
-    public void generarMatrizAnj(){
-        for (int ciu = 0; ciu < Ciudades.size(); ciu++) {
-            ArrayList<Ciudad> ciurel = Ciudades.get(ciu).Relaciones;
-            for (int ciuvec = 0; ciuvec < Ciudades.size(); ciuvec ++) {
-                if(ciurel.contains(Ciudades.get(ciuvec)))
-                    MatrizAdj.editarMatriz(ciuvec, ciu, 1);
-                else
-                    MatrizAdj.editarMatriz(ciuvec, ciu, 0);
-            }
-        }  
-        MatrizAdj.imprimirMatriz();
-        MatrizDist.imprimirMatriz();
-    }
-
-    public void buscarCaminosMinimos(){
+    public void buscarCaminosMinimos() {
 
         int i, j, k;
 
@@ -157,38 +165,90 @@ public class PanelAreaTrabajo extends JPanel{
         MatrizCamMin.Alto = MatrizDist.Alto;
         MatrizCamMin.Ancho = MatrizDist.Ancho;
 
-        for (k = 0; k < MatrizCamMin.Alto; k++)  
-            for (i = 0; i < MatrizCamMin.Alto; i++)  
-                for (j = 0; j < MatrizCamMin.Alto; j++)  {
+        for (k = 0; k < MatrizCamMin.Alto; k++)
+            for (i = 0; i < MatrizCamMin.Alto; i++)
+                for (j = 0; j < MatrizCamMin.Alto; j++) {
                     int Val = MatrizCamMin.celda(k, i) + MatrizCamMin.celda(j, k);
-                    if (Val < MatrizCamMin.celda(j, i))  
-                        MatrizCamMin.editarMatriz(j, i, Val);  
-                }  
+                    if (Val < MatrizCamMin.celda(j, i))
+                        MatrizCamMin.editarMatriz(j, i, Val);
+                }
 
         MatrizCamMin.imprimirMatriz();
     }
 
-    public ArrayList<Ciudad> buscarCaminoDijsktra(int Inicio, int Final){
-        
-        ArrayList<Ciudad> Camino = new ArrayList<Ciudad>();
-        int MatrizAux[][] = new int[MatrizAdj.Alto][MatrizAdj.Ancho];
-        int minNodo = Inicio;
-        for(int paso = 0; paso < MatrizAdj.Alto; paso++){
-            for(int nodo = 0; nodo < MatrizAdj.Ancho; nodo++){
-                MatrizAux[nodo][paso] = Math.max(MatrizDist.celda(minNodo, nodo), MatrizAux[nodo][paso]);
-            }
+    public void verificarCaminos(Ciudad Nodo) {
+        for (Ciudad Vecino : Nodo.Caminos.keySet()) {
+            int IndexNodo = Ciudades.indexOf(Nodo);
+            int IndexVec = Ciudades.indexOf(Vecino);
+            int Distancia = MatrizCamDijkstra.celda(0, IndexNodo) + MatrizDist.celda(IndexNodo, IndexVec);
 
-            for(int nodo = 0; nodo < MatrizAdj.Alto; nodo++)
-                
-                if(MatrizAux[nodo][paso] < MatrizAux[minNodo][paso])
-                    minNodo = nodo;
+            if (Distancia < MatrizCamDijkstra.celda(0, IndexVec)) {
+                MatrizCamDijkstra.editarMatriz(0, IndexVec, Distancia);
+                MatrizCamDijkstra.editarMatriz(1, IndexVec, IndexNodo);
+                MatrizCamDijkstra.imprimirMatriz();
+                verificarCaminos(Vecino);
+            }
+        }
+    }
+
+    public ArrayList<Ciudad> buscarCaminoDijsktra(Ciudad IN, Ciudad FIN) {
+
+        int Inicio = Ciudades.indexOf(IN);
+        int Final = Ciudades.indexOf(FIN);
+
+        MatrizCamDijkstra.borrarMatriz();
+        MatrizCamDijkstra.editarMatriz(1, Ciudades.size() - 1, 0);
+        MatrizCamDijkstra.rellenarColumna(0, Control.INF);
+        MatrizCamDijkstra.editarMatriz(0, Inicio, 0);
+        MatrizCamDijkstra.imprimirMatriz();
+        verificarCaminos(Ciudades.get(Inicio));
+
+        ArrayList<Ciudad> Cam = new ArrayList<Ciudad>();
+        int Nodo = Final;
+
+        while (Nodo != Inicio) {
+            Cam.add(Ciudades.get(Nodo));
+            Nodo = MatrizCamDijkstra.celda(1, Nodo);
+        }
+        Cam.add(Ciudades.get(Inicio));
+
+        MatrizCamDijkstra.imprimirMatriz();
+        return Cam;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
             
-            for(int a = 0; a < MatrizAdj.Ancho; a++)
-                MatrizAux[minNodo][a] = INF;
-            
-            Camino.add(Ciudades.get(minNodo));
+        if(Control.ESTADO == Control.ESTAGREGAR && !Control.PanPrinc.PnNomCiu.Activo){
+            Control.PanPrinc.PnNomCiu.X = e.getX();
+            Control.PanPrinc.PnNomCiu.Y = e.getY();
+            Control.PanPrinc.PnNomCiu._mover(new Point(650, 300));
+            Control.PanPrinc.PnNomCiu.JTNombre.setText("");
+            Control.PanPrinc.PnNomCiu.Activo = true;
         }
 
-        return Camino;
-    }  
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // TODO Auto-generated method stub
+
+    }
 }
