@@ -24,10 +24,16 @@ public class Ciudad extends JPanel implements MouseInputListener {
         setLayout(null);
 
         Nombre = Nom;
-        
-        setBounds(Px, Py, Control.CiudadTam, Control.CiudadTam + 30);
+
+
+        setBounds(Px, Py, Control.CiudadTam, Control.CiudadTam + 10);
         setOpaque(false);
         
+        JLabel LbNombre = new JLabel(Nom);
+        LbNombre.setBounds(0, Control.CiudadTam - 25, Control.CiudadTam , 30);
+        LbNombre.setHorizontalAlignment(JLabel.CENTER);
+        add(LbNombre);
+
         addMouseMotionListener(this);
         addMouseListener(this);
 
@@ -37,7 +43,7 @@ public class Ciudad extends JPanel implements MouseInputListener {
     public void mouseDragged(MouseEvent e) {
         if(Control.ESTADO == Control.ESTNORMAL){
             Point P = Control.Ventana.getLocation();
-            setBounds(e.getXOnScreen() - P.x - PDif.x, e.getYOnScreen() - P.y - PDif.y, Control.CiudadTam, Control.CiudadTam + 30);
+            setBounds(e.getXOnScreen() - P.x - PDif.x, e.getYOnScreen() - P.y - PDif.y, Control.CiudadTam, Control.CiudadTam + 10);
             Control.Ventana.repaint();
         }
     }
@@ -46,22 +52,28 @@ public class Ciudad extends JPanel implements MouseInputListener {
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
 
-        g.drawImage(Control.ImCiudad, 0, 0, this);
-        g.drawString(Nombre, 0, Control.CiudadTam + 25);
+        if(Control.CiudadAux == this || Control.CiudadS == this)
+            g.drawImage(Control.ImCiudadSel, 0, 0, this);
+        else
+            g.drawImage(Control.ImCiudad, 0, 0, this);
     }
 
     @Override 
     public void mousePressed(MouseEvent e) {
 
-        if(Control.ESTADO == Control.ESTBORRAR)
+        if(Control.ESTADO == Control.ESTBORRAR){
             Control.AreaTrabajo.eliminarCiudad(this);
-        else if(Control.ESTADO == Control.ESTCONECT){
+            Control.CiudadAux = null;
+            Control.CiudadS = null;
+        }else if(Control.ESTADO == Control.ESTCONECT){
             if(Control.CiudadAux != null && Control.CiudadAux != this){
                 Control.PanPrinc.PnDisCiu._mover(new Point(650, 300));
                 Control.PanPrinc.PnDisCiu.JTNombre.setText("");
                 Control.PanPrinc.PnDisCiu.Activo = true;
                 Control.PanPrinc.PnDisCiu.CiudadFin = this;
-                Control.Ventana.repaint();
+                Control.PanPrinc.PnDisCiu.JTNombre.requestFocus();
+                Control.CiudadS = this;
+                
             }else{
                 Control.CiudadAux = this;
             }
@@ -69,6 +81,7 @@ public class Ciudad extends JPanel implements MouseInputListener {
             if(Control.CiudadAux != null && Control.CiudadAux != this){
                 Control.AreaTrabajo.Caminos =  Control.AreaTrabajo.buscarCaminoDijsktra(Control.CiudadAux, this);
                 Control.CiudadAux = null;
+                Control.CiudadS = this;
                 Control.Ventana.repaint();
             }else{
                 Control.CiudadAux = this;
@@ -79,6 +92,7 @@ public class Ciudad extends JPanel implements MouseInputListener {
             PDif.x = e.getXOnScreen() - getLocation().x -  Control.Ventana.getLocation().x;
             PDif.y = e.getYOnScreen() - getLocation().y -  Control.Ventana.getLocation().y;
         }
+        Control.Ventana.repaint();
     }
 
     @Override public void mouseClicked(MouseEvent e) {}

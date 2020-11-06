@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.MouseInfo;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -11,15 +12,15 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.BasicStroke;
 
-
 import javax.swing.JPanel;
+import javax.swing.event.MouseInputListener;
 
 import proy2.Paneles.Componentes.*;
 import proy2.Control;
 import proy2.MatrizDin;
 
 @SuppressWarnings(value = "serial")
-public class PanelAreaTrabajo extends JPanel implements MouseListener {
+public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
 
     public ArrayList<Ciudad> Caminos = new ArrayList<Ciudad>();
     public ArrayList<Ciudad> Ciudades = new ArrayList<Ciudad>();
@@ -29,6 +30,7 @@ public class PanelAreaTrabajo extends JPanel implements MouseListener {
     public MatrizDin MatrizCamDijkstra = new MatrizDin();
     public ArrayList<Ciudad> NodosVer = new ArrayList<Ciudad>();
     private int Index = 0;
+    public Point PosMouse = new Point(0,0);
 
     public PanelAreaTrabajo() {
 
@@ -37,6 +39,7 @@ public class PanelAreaTrabajo extends JPanel implements MouseListener {
         setOpaque(false);
 
         addMouseListener(this);
+        addMouseMotionListener(this);
 
         MatrizCamDijkstra.editarMatriz(1, 4, 0);
         MatrizCamDijkstra.rellenarColumna(0, Control.INF);
@@ -135,7 +138,7 @@ public class PanelAreaTrabajo extends JPanel implements MouseListener {
             Point PIni = ciu.getLocation();
             for (Ciudad ciuVec : ciu.Caminos.keySet()) {
                 Point PFin = ciuVec.getLocation();
-                g2.setColor(Control.ColNaranja);
+                g2.setColor(Control.ColMorado);
                 g2.drawLine(PIni.x + Control.CiudadTam / 2, PIni.y + Control.CiudadTam / 2 + 10,
                         PFin.x + Control.CiudadTam / 2, PFin.y + Control.CiudadTam / 2 + 10);
             }
@@ -151,10 +154,12 @@ public class PanelAreaTrabajo extends JPanel implements MouseListener {
                 PuntosY[i] = PosCiudad.y + Control.CiudadTam / 2 + 10;
             }
 
-            g2.setColor(Color.CYAN);
+            g2.setColor(Control.ColNaranja);
             g2.drawPolyline(PuntosX, PuntosY, Caminos.size());
         }
-
+    
+        if(Control.ESTADO == Control.ESTAGREGAR)
+            g2.drawImage(Control.ImCiudad, PosMouse.x, PosMouse.y, this);
     }
 
     public void buscarCaminosMinimos() {
@@ -234,6 +239,7 @@ public class PanelAreaTrabajo extends JPanel implements MouseListener {
             Control.PanPrinc.PnNomCiu.X = e.getX();
             Control.PanPrinc.PnNomCiu.Y = e.getY();
             Control.PanPrinc.PnNomCiu._mover(new Point(650, 300));
+            Control.PanPrinc.PnNomCiu.JTNombre.requestFocus();
             Control.PanPrinc.PnNomCiu.JTNombre.setText("");
             Control.PanPrinc.PnNomCiu.Activo = true;
         }
@@ -250,5 +256,21 @@ public class PanelAreaTrabajo extends JPanel implements MouseListener {
     public void mouseExited(MouseEvent e) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        if(Control.ESTADO == Control.ESTAGREGAR && !Control.PanPrinc.PnNomCiu.Activo){
+            PosMouse = new Point(e.getXOnScreen() - Control.Ventana.getLocation().x - getLocation().x - Control.CiudadTam/2,
+                                 e.getYOnScreen() - Control.Ventana.getLocation().y - getLocation().y - Control.CiudadTam/2);
+            System.out.print(PosMouse.x + ", ");
+            System.out.println(PosMouse.y);
+            repaint();   
+        }
     }
 }

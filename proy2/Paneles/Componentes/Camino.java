@@ -31,7 +31,7 @@ public class Camino extends JPanel{
 
         //INICIAR LABEL
         LbDist = new JLabel(""+Distancia);
-        LbDist.setBounds(0,0,30,30);
+        LbDist.setBounds(12,5,30,30);
         LbDist.setForeground(Color.BLACK);
         add(LbDist);
     }
@@ -41,7 +41,9 @@ public class Camino extends JPanel{
 
         int IntX = (CiudadOr.getLocation().x + CiudadFin.getLocation().x + Control.CiudadTam)/2;
         int IntY = (CiudadOr.getLocation().y + CiudadFin.getLocation().y + Control.CiudadTam)/2;
-        setBounds(IntX, IntY, 30, 30);
+        setBounds(IntX -17, IntY - 17, 35, 35);
+        g.setColor(Color.white);
+        g.fillOval(0, 0, 35, 35);
 
     }
 }

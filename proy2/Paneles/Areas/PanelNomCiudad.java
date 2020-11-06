@@ -37,12 +37,12 @@ public class PanelNomCiudad extends Objetos implements ActionListener {
         setOpaque(false);
 
 
-        JTNombre.setBounds(30, 45, 100, 20);
+        JTNombre.setBounds(100, 45, 100, 20);
         add(JTNombre);
 
         JButton BtAceptar = new JButton("Aceptar");
         BtAceptar.addActionListener(this);
-        BtAceptar.setBounds(30, 70, 100, 20);
+        BtAceptar.setBounds(100, 70, 100, 20);
         add(BtAceptar);
     }
 
@@ -72,7 +72,8 @@ public class PanelNomCiudad extends Objetos implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         _mover(new Point(650, 1000));
-
+        Control.CiudadS = null;
+        Control.CiudadAux = null;
         Control.AreaTrabajo.agregarCiudad(JTNombre.getText(), X - Control.CiudadTam/2, Y - Control.CiudadTam/2);
         Control.Ventana.repaint();
         Activo = false;

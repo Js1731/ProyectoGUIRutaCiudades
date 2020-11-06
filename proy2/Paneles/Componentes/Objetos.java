@@ -23,8 +23,8 @@ public class Objetos extends JPanel {
                 while (PosAct.distance(PosFin) > 10) {
                     PosAct = getLocation();
 
-                    Vel.x = Math.round((PosFin.x - PosAct.x) * 0.1f);
-                    Vel.y = Math.round((PosFin.y - PosAct.y) * 0.1f);
+                    Vel.x = Math.round((PosFin.x - PosAct.x) * 0.25f);
+                    Vel.y = Math.round((PosFin.y - PosAct.y) * 0.25f);
 
                     setBounds(PosAct.x + Vel.x, PosAct.y + Vel.y, TamX, TamY);
 

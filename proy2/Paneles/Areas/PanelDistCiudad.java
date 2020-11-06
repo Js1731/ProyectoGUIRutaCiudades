@@ -38,12 +38,12 @@ public class PanelDistCiudad extends Objetos implements ActionListener {
         setOpaque(false);
 
 
-        JTNombre.setBounds(30, 45, 100, 20);
+        JTNombre.setBounds(100, 45, 100, 20);
         add(JTNombre);
 
         JButton BtAceptar = new JButton("Aceptar");
         BtAceptar.addActionListener(this);
-        BtAceptar.setBounds(30, 70, 100, 20);
+        BtAceptar.setBounds(100, 70, 100, 20);
         add(BtAceptar);
     }
 
@@ -76,6 +76,7 @@ public class PanelDistCiudad extends Objetos implements ActionListener {
 
         Control.AreaTrabajo.conectarCiudades(Control.CiudadAux, CiudadFin, Integer.parseInt(JTNombre.getText()));
         Control.Ventana.repaint();
+        Control.CiudadS = null;
         Control.CiudadAux = null;
         Activo = false;
     }
