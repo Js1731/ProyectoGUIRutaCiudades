@@ -3,32 +3,61 @@ package proy2;
 import java.awt.Toolkit;
 import java.awt.Dimension;
 import javax.swing.JFrame;
+import javax.swing.event.MouseInputListener;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 
 import proy2.Paneles.Areas.PanelPrincipal;
 
-class Listener implements KeyListener{
+class Listener implements KeyListener, MouseInputListener {
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    int DifX;
+    int DifY;
 
     @Override
     public void keyReleased(KeyEvent e) {
         Control.ESTADO = Control.ESTNORMAL;
         System.out.println("NORMAL");
     }
+
+    public void mousePressed(MouseEvent e) {
+        DifX = e.getXOnScreen() - Control.Ventana.getLocation().x;
+        DifY = e.getYOnScreen() - Control.Ventana.getLocation().y;
+    }
+
+    public void mouseDragged(MouseEvent e) {
+        JFrame Vent = (JFrame) e.getSource();
+        Vent.setLocation(e.getXOnScreen() - DifX, e.getYOnScreen() - DifY);
+
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+    }
+
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+    }
 }
+
 
 public class App{
     public static void main(String[] args) {
@@ -49,7 +78,10 @@ public class App{
         Ventana.setVisible(true);
 
         Ventana.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        Ventana.addKeyListener(new Listener());
+        Listener Adaptador = new Listener();
+        Ventana.addKeyListener(Adaptador);
+        Ventana.addMouseMotionListener(Adaptador);
+        Ventana.addMouseListener(Adaptador);
 
     }
 

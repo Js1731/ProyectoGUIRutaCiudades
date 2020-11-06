@@ -1,6 +1,5 @@
 package proy2.Paneles.Componentes;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.util.HashMap;
 

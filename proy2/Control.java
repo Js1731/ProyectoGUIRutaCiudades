@@ -33,6 +33,7 @@ public class Control {
     public static final int ESTAGREGAR = 4;
 
     public static final Font TextoTab = new Font("Arial", Font.BOLD, 20);
+    public static final Font TextoCiudad = new Font("Arial", Font.BOLD, 40);
 
     public static final Color ColNaranja = new Color(203, 118, 53, 255);
     public static final Color ColMorado = new Color(110, 106, 164, 255);

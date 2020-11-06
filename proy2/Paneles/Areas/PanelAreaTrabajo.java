@@ -1,16 +1,13 @@
 package proy2.Paneles.Areas;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.MouseInfo;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.BasicStroke;
+import java.awt.Color;
 
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
@@ -29,8 +26,7 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
     public MatrizDin MatrizCamMin = new MatrizDin();
     public MatrizDin MatrizCamDijkstra = new MatrizDin();
     public ArrayList<Ciudad> NodosVer = new ArrayList<Ciudad>();
-    private int Index = 0;
-    public Point PosMouse = new Point(0,0);
+    public Point PosMouse = new Point(-200,0);
 
     public PanelAreaTrabajo() {
 
@@ -131,7 +127,11 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
 
         g2.setRenderingHints(qualityHints);
         g2.setStroke(new BasicStroke(10));
+        g2.setColor(Color.lightGray);
+        g2.setFont(Control.TextoCiudad);
 
+        if(Ciudades.isEmpty() && !Control.PanPrinc.PnNomCiu.Activo && Control.ESTADO != Control.ESTAGREGAR)
+            g2.drawString("Agrega una ciudad", 120, 350);
 
         // DIBUJAR CONEXIONES
         for (Ciudad ciu : Ciudades) {
@@ -222,17 +222,6 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
     public void mouseReleased(MouseEvent e) {
             
         if(Control.ESTADO == Control.ESTAGREGAR && !Control.PanPrinc.PnNomCiu.Activo){
@@ -247,23 +236,6 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-
-    }
-
-    @Override
     public void mouseMoved(MouseEvent e) {
         if(Control.ESTADO == Control.ESTAGREGAR && !Control.PanPrinc.PnNomCiu.Activo){
             PosMouse = new Point(e.getXOnScreen() - Control.Ventana.getLocation().x - getLocation().x - Control.CiudadTam/2,
@@ -273,4 +245,20 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
             repaint();   
         }
     }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+
+    @Override
+    public void mousePressed(MouseEvent e) {}
+
+
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
+
+    @Override
+    public void mouseDragged(MouseEvent e) {}
 }

@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.awt.Point;
 
 import javax.swing.JButton;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import proy2.Control;

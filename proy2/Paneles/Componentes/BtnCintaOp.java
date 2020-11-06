@@ -1,11 +1,8 @@
 package proy2.Paneles.Componentes;
 
-import java.awt.Color;
 import java.awt.Graphics;
 
 import javax.swing.JPanel;
-
-import proy2.Control;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

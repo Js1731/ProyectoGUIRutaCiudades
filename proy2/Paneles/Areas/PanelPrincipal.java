@@ -4,8 +4,6 @@ import javax.swing.JPanel;
 
 import java.awt.event.MouseEvent;
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import proy2.Control;
 import proy2.Paneles.Componentes.BtnCintaOp;
@@ -30,7 +28,6 @@ public class PanelPrincipal extends JPanel{
         
 
         // BOTONES DE LA CINTA DE OPCIONES
-
         Agregar = new BtnCintaOp(700, 620, Control.BtnAgregar0, Control.BtnAgregar1, Control.BtnAgregar2) {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -110,9 +107,6 @@ public class PanelPrincipal extends JPanel{
         add(Control.Expositor = new PanelExpositor());
 
         /// PESTANAS PARA SELECCIONAR TABLAS
-
-
-
         TabAdy = new BtnTab("Adyacencia", 37, 250, 130, 50) {
             @Override
             public void mouseReleased(MouseEvent e) {
