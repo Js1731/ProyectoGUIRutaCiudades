@@ -19,14 +19,16 @@ import proy2.MatrizDin;
 @SuppressWarnings(value = "serial")
 public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
 
-    public ArrayList<Ciudad> Caminos = new ArrayList<Ciudad>();
-    public ArrayList<Ciudad> Ciudades = new ArrayList<Ciudad>();
-    public MatrizDin MatrizAdj = new MatrizDin();
-    public MatrizDin MatrizDist = new MatrizDin();
-    public MatrizDin MatrizCamMin = new MatrizDin();
+    public ArrayList<Ciudad> Caminos   = new ArrayList<Ciudad>();
+    public ArrayList<Ciudad> Ciudades  = new ArrayList<Ciudad>();
+    public MatrizDin MatrizAdj         = new MatrizDin();
+    public MatrizDin MatrizDist        = new MatrizDin();
+    public MatrizDin MatrizCamMin      = new MatrizDin();
     public MatrizDin MatrizCamDijkstra = new MatrizDin();
-    public ArrayList<Ciudad> NodosVer = new ArrayList<Ciudad>();
-    public Point PosMouse = new Point(-200,0);
+    public ArrayList<Ciudad> NodosVer  = new ArrayList<Ciudad>();
+    public Point PosMouse              = new Point(-200,0);
+    private int Iteraciones = 0;
+
 
     public PanelAreaTrabajo() {
 
@@ -36,11 +38,6 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
 
         addMouseListener(this);
         addMouseMotionListener(this);
-
-        MatrizCamDijkstra.editarMatriz(1, 4, 0);
-        MatrizCamDijkstra.rellenarColumna(0, Control.INF);
-
-        buscarCaminosMinimos();
     }
 
     public void eliminarCiudad(Ciudad Ci) {
@@ -63,16 +60,15 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
         }
 
         Caminos = null;
-
         Ciudades.remove(Ci);
         remove(Ci);
 
-        buscarCaminosMinimos();
-
         // ACTUALIZAR MATRICES
+        buscarCaminosMinimos();
         Control.Expositor._actualizar_matrices();
         Control.Ventana.repaint();
     }
+
 
     public Ciudad agregarCiudad(String Nombre, int Px, int Py) {
         Ciudad Ci = new Ciudad(Px, Py, Nombre);
@@ -83,24 +79,26 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
 
         MatrizDist.agregarColumna();
         MatrizDist.agregarFila();
+        MatrizDist.rellenarColumna(MatrizDist.Ancho - 1, Control.INF);
+        MatrizDist.rellenarFila(MatrizDist.Alto - 1, Control.INF);
+        MatrizDist.editarMatriz(MatrizDist.Ancho - 1, MatrizDist.Alto - 1, 0);
 
         MatrizCamMin.agregarColumna();
         MatrizCamMin.agregarFila();
-
-        MatrizDist.rellenarColumna(MatrizDist.Ancho - 1, Control.INF);
-        MatrizDist.rellenarFila(MatrizDist.Alto - 1, Control.INF);
-
-        MatrizDist.editarMatriz(MatrizDist.Ancho - 1, MatrizDist.Alto - 1, 0);
 
         buscarCaminosMinimos();
         Ciudades.add(Ci);
         add(Ci);
         Control.Expositor._actualizar_matrices();
+
         return Ci;
     }
 
+
     public void conectarCiudades(Ciudad Or, Ciudad Fin, int Dist) {
         Camino Cm = new Camino(Or, Fin, Dist);
+
+        //Actualizar Caminos entre ciudades
         Or.Caminos.put(Fin, Cm);
         Fin.Caminos.put(Or, Cm);
 
@@ -116,51 +114,6 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
         add(Cm);
     }
 
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        //MEJORAR RESOLUCION DE FORMAS
-        RenderingHints qualityHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        qualityHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        Graphics2D g2 = (Graphics2D)g.create();
-
-        g2.setRenderingHints(qualityHints);
-        g2.setStroke(new BasicStroke(10));
-        g2.setColor(Color.lightGray);
-        g2.setFont(Control.TextoCiudad);
-
-        if(Ciudades.isEmpty() && !Control.PanPrinc.PnNomCiu.Activo && Control.ESTADO != Control.ESTAGREGAR)
-            g2.drawString("Agrega una ciudad", 120, 350);
-
-        // DIBUJAR CONEXIONES
-        for (Ciudad ciu : Ciudades) {
-            Point PIni = ciu.getLocation();
-            for (Ciudad ciuVec : ciu.Caminos.keySet()) {
-                Point PFin = ciuVec.getLocation();
-                g2.setColor(Control.ColMorado);
-                g2.drawLine(PIni.x + Control.CiudadTam / 2, PIni.y + Control.CiudadTam / 2 + 10,
-                        PFin.x + Control.CiudadTam / 2, PFin.y + Control.CiudadTam / 2 + 10);
-            }
-        }
-
-        if(Caminos != null){
-            int PuntosX[] = new int[Caminos.size()];
-            int PuntosY[] = new int[Caminos.size()];
-
-            for (int i = 0; i < Caminos.size(); i++) {
-                Point PosCiudad = Caminos.get(i).getLocation();
-                PuntosX[i] = PosCiudad.x + Control.CiudadTam / 2;
-                PuntosY[i] = PosCiudad.y + Control.CiudadTam / 2 + 10;
-            }
-
-            g2.setColor(Control.ColNaranja);
-            g2.drawPolyline(PuntosX, PuntosY, Caminos.size());
-        }
-    
-        if(Control.ESTADO == Control.ESTAGREGAR)
-            g2.drawImage(Control.ImCiudad, PosMouse.x, PosMouse.y, this);
-    }
 
     public void buscarCaminosMinimos() {
 
@@ -181,33 +134,40 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
         MatrizCamMin.imprimirMatriz();
     }
 
-    public void verificarCaminos(Ciudad Nodo) {
-        for (Ciudad Vecino : Nodo.Caminos.keySet()) {
-            int IndexNodo = Ciudades.indexOf(Nodo);
-            int IndexVec = Ciudades.indexOf(Vecino);
-            int Distancia = MatrizCamDijkstra.celda(0, IndexNodo) + MatrizDist.celda(IndexNodo, IndexVec);
 
-            if (Distancia < MatrizCamDijkstra.celda(0, IndexVec)) {
-                MatrizCamDijkstra.editarMatriz(0, IndexVec, Distancia);
-                MatrizCamDijkstra.editarMatriz(1, IndexVec, IndexNodo);
-                MatrizCamDijkstra.imprimirMatriz();
-                verificarCaminos(Vecino);
-            }
-        }
+    public void verificarCaminos(Ciudad Nodo) {
+
+            for (Ciudad Vecino : Nodo.Caminos.keySet()) {
+                int IndexNodo = Ciudades.indexOf(Nodo);
+                int IndexVec = Ciudades.indexOf(Vecino);
+                int Distancia = MatrizCamDijkstra.celda(0, IndexNodo) + MatrizDist.celda(IndexNodo, IndexVec);
+
+                if (Distancia < MatrizCamDijkstra.celda(0, IndexVec)) {
+                    MatrizCamDijkstra.editarMatriz(0, IndexVec, Distancia);
+                    MatrizCamDijkstra.editarMatriz(1, IndexVec, IndexNodo);
+                    MatrizCamDijkstra.imprimirMatriz();
+                    verificarCaminos(Vecino);
+                }
     }
 
+
     public ArrayList<Ciudad> buscarCaminoDijsktra(Ciudad IN, Ciudad FIN) {
+
+        Iteraciones = 0;
 
         int Inicio = Ciudades.indexOf(IN);
         int Final = Ciudades.indexOf(FIN);
 
+        //INICIAR TABLA MATRIZ DIJKSTRA
         MatrizCamDijkstra.borrarMatriz();
         MatrizCamDijkstra.editarMatriz(1, Ciudades.size() - 1, 0);
         MatrizCamDijkstra.rellenarColumna(0, Control.INF);
         MatrizCamDijkstra.editarMatriz(0, Inicio, 0);
-        MatrizCamDijkstra.imprimirMatriz();
+
+        //BUSCAR CAMINOS MINIMOS
         verificarCaminos(Ciudades.get(Inicio));
 
+        //GENERAR CAMINO
         ArrayList<Ciudad> Cam = new ArrayList<Ciudad>();
         int Nodo = Final;
 
@@ -217,10 +177,64 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
         }
         Cam.add(Ciudades.get(Inicio));
 
-        MatrizCamDijkstra.imprimirMatriz();
         return Cam;
     }
 
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        //MEJORAR RESOLUCION DE FORMAS
+        RenderingHints qualityHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        qualityHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        Graphics2D g2 = (Graphics2D)g.create();
+
+        g2.setRenderingHints(qualityHints);
+        g2.setStroke(new BasicStroke(10));
+        g2.setColor(Color.lightGray);
+        g2.setFont(Control.TextoCiudad);
+
+
+        if(Ciudades.isEmpty() && !Control.PanPrinc.PnNomCiu.Activo && Control.ESTADO != Control.ESTAGREGAR)
+            g2.drawString("Agrega una ciudad", 120, 350);
+
+
+        // DIBUJAR CONEXIONES
+        for (Ciudad ciu : Ciudades) {
+            Point PIni = ciu.getLocation();
+            for (Ciudad ciuVec : ciu.Caminos.keySet()) {
+                Point PFin = ciuVec.getLocation();
+                g2.setColor(Control.ColMorado);
+                g2.drawLine(PIni.x + Control.CiudadTam / 2, PIni.y + Control.CiudadTam / 2 + 10,
+                        PFin.x + Control.CiudadTam / 2, PFin.y + Control.CiudadTam / 2 + 10);
+            }
+        }
+
+
+        // DIBUJAR CAMINO
+        if(Caminos != null){
+            int PuntosX[] = new int[Caminos.size()];
+            int PuntosY[] = new int[Caminos.size()];
+
+            for (int i = 0; i < Caminos.size(); i++) {
+                Point PosCiudad = Caminos.get(i).getLocation();
+                PuntosX[i] = PosCiudad.x + Control.CiudadTam / 2;
+                PuntosY[i] = PosCiudad.y + Control.CiudadTam / 2 + 10;
+            }
+
+            g2.setColor(Control.ColNaranja);
+            g2.drawPolyline(PuntosX, PuntosY, Caminos.size());
+        }
+    
+
+        //DIBUJAR SILUETA DE CIUDAD
+        if(Control.ESTADO == Control.ESTAGREGAR)
+            g2.drawImage(Control.ImCiudad, PosMouse.x, PosMouse.y, this);
+    }
+
+
+    //          AGREGAR CIUDAD
     @Override
     public void mouseReleased(MouseEvent e) {
             
@@ -235,6 +249,7 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
 
     }
 
+    //      ACTUALIZAR POSICION DE SILUETA
     @Override
     public void mouseMoved(MouseEvent e) {
         if(Control.ESTADO == Control.ESTAGREGAR && !Control.PanPrinc.PnNomCiu.Activo){
@@ -246,19 +261,9 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
         }
     }
 
-    @Override
     public void mouseClicked(MouseEvent e) {}
-
-    @Override
     public void mousePressed(MouseEvent e) {}
-
-
-    @Override
     public void mouseEntered(MouseEvent e) {}
-
-    @Override
     public void mouseExited(MouseEvent e) {}
-
-    @Override
     public void mouseDragged(MouseEvent e) {}
 }

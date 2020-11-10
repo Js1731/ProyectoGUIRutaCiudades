@@ -32,6 +32,11 @@ public class Control {
     public static final int ESTBUSCAR = 3;
     public static final int ESTAGREGAR = 4;
 
+    //FUENTES
+    static public Color ColSel = new Color(255,102,0,255);
+    static public Font FntCarta = new Font("Arial Rounded MT Bold", Font.PLAIN, 20);
+    static public Font FntTitulo = new Font("Arial Rounded MT Bold", Font.BOLD, 40);
+    static public Font FntTituloTexto = new Font("Arial Rounded MT Bold", Font.PLAIN, 30);
     public static final Font TextoTab = new Font("Arial", Font.BOLD, 20);
     public static final Font TextoCiudad = new Font("Arial", Font.BOLD, 40);
 

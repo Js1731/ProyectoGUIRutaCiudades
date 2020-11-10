@@ -82,7 +82,6 @@ public class App{
         Ventana.addKeyListener(Adaptador);
         Ventana.addMouseMotionListener(Adaptador);
         Ventana.addMouseListener(Adaptador);
-
     }
 
 }

@@ -24,7 +24,6 @@ public class Ciudad extends JPanel implements MouseInputListener {
 
         Nombre = Nom;
 
-
         setBounds(Px, Py, Control.CiudadTam, Control.CiudadTam + 10);
         setOpaque(false);
         

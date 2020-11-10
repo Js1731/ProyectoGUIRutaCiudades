@@ -11,7 +11,7 @@ import proy2.Paneles.Componentes.BtnTab;
 
 @SuppressWarnings(value = "serial")
 public class PanelPrincipal extends JPanel{
-
+    
     private BtnTab TabAdy, TabDis, TabCam;
     private BtnCintaOp Agregar, Conectar, Borrar, Normal, Buscar;
     public PanelNomCiudad PnNomCiu = new PanelNomCiudad(0, 0);
@@ -23,8 +23,11 @@ public class PanelPrincipal extends JPanel{
 
         Control.PanPrinc = this;
 
+        
         add(PnNomCiu);
         add(PnDisCiu);
+
+        add(new PnIntro());
         
 
         // BOTONES DE LA CINTA DE OPCIONES
@@ -134,7 +137,7 @@ public class PanelPrincipal extends JPanel{
             }
         };
         add(TabCam);
-
+        
     }
 
     @Override
