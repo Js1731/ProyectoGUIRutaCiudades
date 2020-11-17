@@ -21,11 +21,14 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
 
     public ArrayList<Ciudad> Caminos = new ArrayList<Ciudad>();
     public ArrayList<Ciudad> Ciudades = new ArrayList<Ciudad>();
+    public ArrayList<Ciudad> NodosVer = new ArrayList<Ciudad>();
+
     public MatrizDin MatrizAdj = new MatrizDin();
     public MatrizDin MatrizDist = new MatrizDin();
     public MatrizDin MatrizCamMin = new MatrizDin();
+    public MatrizDin MatrizRecorrido = new MatrizDin();
     public MatrizDin MatrizCamDijkstra = new MatrizDin();
-    public ArrayList<Ciudad> NodosVer = new ArrayList<Ciudad>();
+    
     public Point PosMouse = new Point(-200, 0);
     public String Mensaje = "";
 
@@ -52,6 +55,9 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
         MatrizDist.eliminarColumna(ind);
         MatrizDist.eliminarFila(ind);
 
+        MatrizRecorrido.eliminarColumna(ind);
+        MatrizRecorrido.eliminarFila(ind);
+
         // ELIMINAR CAMINOS CON OTRAS CIUDADES
         for (Ciudad Vec : Ci.Caminos.keySet()) {
             remove(Ci.Caminos.get(Vec));
@@ -77,6 +83,10 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
 
         MatrizDist.agregarColumna();
         MatrizDist.agregarFila();
+
+        MatrizRecorrido.agregarColumna();
+        MatrizRecorrido.agregarFila();
+
         MatrizDist.rellenarColumna(MatrizDist.Ancho - 1, Control.INF);
         MatrizDist.rellenarFila(MatrizDist.Alto - 1, Control.INF);
         MatrizDist.editarMatriz(MatrizDist.Ancho - 1, MatrizDist.Alto - 1, 0);
@@ -113,20 +123,28 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
 
     public void buscarCaminosMinimos() {
 
-        int i, j, k;
-
+        for(int e = 0; e < MatrizRecorrido.Alto; e++)
+            MatrizRecorrido.rellenarColumna(e, e);
+        
         MatrizCamMin.Valores = new ArrayList<>(MatrizDist.Valores);
         MatrizCamMin.Alto = MatrizDist.Alto;
         MatrizCamMin.Ancho = MatrizDist.Ancho;
 
-        for (k = 0; k < MatrizCamMin.Alto; k++)
-            for (i = 0; i < MatrizCamMin.Alto; i++)
-                for (j = 0; j < MatrizCamMin.Alto; j++) {
-                    int Val = MatrizCamMin.celda(k, i) + MatrizCamMin.celda(j, k);
-                    if (Val < MatrizCamMin.celda(j, i))
-                        MatrizCamMin.editarMatriz(j, i, Val);
+        for(int n = 0; n < MatrizCamMin.Alto; n++)
+            for(int l = 0; l < MatrizCamMin.Alto; l++)
+                if(l != n){
+                    int Pos1 = MatrizCamMin.celda(n, l);
+                    
+                    for(int p = 0; p <  MatrizCamMin.Alto; p ++){
+                        if(p != n){
+                            int Pos2 = MatrizCamMin.celda(p, n);
+                            if(Pos1 + Pos2 < MatrizCamMin.celda(p, l)){
+                                MatrizCamMin.editarMatriz(p, l, Pos1 + Pos2);
+                                MatrizRecorrido.editarMatriz(p, l, n);
+                            }
+                        }
+                    }
                 }
-
         MatrizCamMin.imprimirMatriz();
     }
 

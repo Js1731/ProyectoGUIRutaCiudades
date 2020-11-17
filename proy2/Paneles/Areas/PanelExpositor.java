@@ -13,6 +13,7 @@ public class PanelExpositor extends JPanel{
     private PanelMatriz MatAdyacencia = new PanelMatriz(Control.AreaTrabajo.MatrizAdj);
     private PanelMatriz MatDistancia  = new PanelMatriz(Control.AreaTrabajo.MatrizDist);
     private PanelMatriz MatCamMin     = new PanelMatriz(Control.AreaTrabajo.MatrizCamMin);
+    private PanelMatrizRec MatRecorrido     = new PanelMatrizRec(Control.AreaTrabajo.MatrizRecorrido);
 
     public PanelExpositor(){
         setLayout(ExpoCont);
@@ -21,6 +22,7 @@ public class PanelExpositor extends JPanel{
         add(MatAdyacencia, "MATADY");
         add(MatDistancia , "MATDIS");
         add(MatCamMin    , "MATCAM");
+        add(MatRecorrido , "MATREC");
 
         ajustarTabla();
 
@@ -45,6 +47,7 @@ public class PanelExpositor extends JPanel{
         MatAdyacencia.actualizar();
         MatDistancia.actualizar();
         MatCamMin.actualizar();
+        (MatRecorrido).actualizar();
         ajustarTabla();
     }
 }
