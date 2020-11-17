@@ -84,8 +84,6 @@ public class Ciudad extends JPanel implements MouseInputListener {
             }else{
                 Control.CiudadAux = this;
             }
-        }else if(Control.ESTADO == Control.ESTAGREGAR){
-            
         }else{
             PDif.x = e.getXOnScreen() - getLocation().x -  Control.Ventana.getLocation().x;
             PDif.y = e.getYOnScreen() - getLocation().y -  Control.Ventana.getLocation().y;

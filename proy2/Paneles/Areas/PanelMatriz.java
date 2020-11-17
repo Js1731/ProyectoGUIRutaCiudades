@@ -46,7 +46,7 @@ public class PanelMatriz extends JPanel{
             add(TxtNom);
             
             for (int w = 0; w < Matriz.Ancho; w++) {
-                PanelInicial TxtCelda = new PanelInicial("" + ((Matriz.celda(w, h) == Control.INF) ? "INF" : Matriz.celda(w, h)), false);
+                PanelInicial TxtCelda = new PanelInicial("" + ((Matriz.celda(w, h) == Control.INF) ? "∞" : Matriz.celda(w, h)), false);
                 add(TxtCelda);
             }
         }
@@ -81,12 +81,14 @@ public class PanelMatriz extends JPanel{
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
 
-            if(EsInicial){            RenderingHints qualityHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            if(EsInicial){            
+                RenderingHints qualityHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 qualityHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 Graphics2D g2 = (Graphics2D)g.create();
         
                 g2.setRenderingHints(qualityHints);
                 
+                g2.setFont(Control.TextoTabla);
                 g2.setColor(Control.ColNaranja);
                 g2.fillOval(0,0, getWidth(),getHeight());
             }

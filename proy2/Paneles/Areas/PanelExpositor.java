@@ -14,21 +14,17 @@ public class PanelExpositor extends JPanel{
     private PanelMatriz MatDistancia  = new PanelMatriz(Control.AreaTrabajo.MatrizDist);
     private PanelMatriz MatCamMin     = new PanelMatriz(Control.AreaTrabajo.MatrizCamMin);
 
-    public static final String MATADY = "Mat1"; 
-    public static final String MATDIS = "Mat2"; 
-    public static final String MATCAM = "Mat3"; 
-
     public PanelExpositor(){
         setLayout(ExpoCont);
         
         setOpaque(false);
-        add(MatAdyacencia, MATADY);
-        add(MatDistancia , MATDIS);
-        add(MatCamMin    , MATCAM);
+        add(MatAdyacencia, "MATADY");
+        add(MatDistancia , "MATDIS");
+        add(MatCamMin    , "MATCAM");
 
         ajustarTabla();
 
-        ExpoCont.show(this, MATADY);
+        ExpoCont.show(this, "MATADY");
     }
 
     private void ajustarTabla(){

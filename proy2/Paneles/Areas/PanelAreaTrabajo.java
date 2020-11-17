@@ -19,16 +19,15 @@ import proy2.MatrizDin;
 @SuppressWarnings(value = "serial")
 public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
 
-    public ArrayList<Ciudad> Caminos   = new ArrayList<Ciudad>();
-    public ArrayList<Ciudad> Ciudades  = new ArrayList<Ciudad>();
-    public MatrizDin MatrizAdj         = new MatrizDin();
-    public MatrizDin MatrizDist        = new MatrizDin();
-    public MatrizDin MatrizCamMin      = new MatrizDin();
+    public ArrayList<Ciudad> Caminos = new ArrayList<Ciudad>();
+    public ArrayList<Ciudad> Ciudades = new ArrayList<Ciudad>();
+    public MatrizDin MatrizAdj = new MatrizDin();
+    public MatrizDin MatrizDist = new MatrizDin();
+    public MatrizDin MatrizCamMin = new MatrizDin();
     public MatrizDin MatrizCamDijkstra = new MatrizDin();
-    public ArrayList<Ciudad> NodosVer  = new ArrayList<Ciudad>();
-    public Point PosMouse              = new Point(-200,0);
-    private int Iteraciones = 0;
-
+    public ArrayList<Ciudad> NodosVer = new ArrayList<Ciudad>();
+    public Point PosMouse = new Point(-200, 0);
+    public String Mensaje = "";
 
     public PanelAreaTrabajo() {
 
@@ -69,7 +68,6 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
         Control.Ventana.repaint();
     }
 
-
     public Ciudad agregarCiudad(String Nombre, int Px, int Py) {
         Ciudad Ci = new Ciudad(Px, Py, Nombre);
 
@@ -94,11 +92,10 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
         return Ci;
     }
 
-
     public void conectarCiudades(Ciudad Or, Ciudad Fin, int Dist) {
         Camino Cm = new Camino(Or, Fin, Dist);
 
-        //Actualizar Caminos entre ciudades
+        // Actualizar Caminos entre ciudades
         Or.Caminos.put(Fin, Cm);
         Fin.Caminos.put(Or, Cm);
 
@@ -113,7 +110,6 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
         Control.Expositor._actualizar_matrices();
         add(Cm);
     }
-
 
     public void buscarCaminosMinimos() {
 
@@ -134,71 +130,80 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
         MatrizCamMin.imprimirMatriz();
     }
 
-
     public void verificarCaminos(Ciudad Nodo) {
 
-            for (Ciudad Vecino : Nodo.Caminos.keySet()) {
-                int IndexNodo = Ciudades.indexOf(Nodo);
-                int IndexVec = Ciudades.indexOf(Vecino);
-                int Distancia = MatrizCamDijkstra.celda(0, IndexNodo) + MatrizDist.celda(IndexNodo, IndexVec);
+        for (Ciudad Vecino : Nodo.Caminos.keySet()) {
+            int IndexNodo = Ciudades.indexOf(Nodo);
+            int IndexVec = Ciudades.indexOf(Vecino);
+            int Distancia = MatrizCamDijkstra.celda(0, IndexNodo) + MatrizDist.celda(IndexNodo, IndexVec);
 
-                if (Distancia < MatrizCamDijkstra.celda(0, IndexVec)) {
-                    MatrizCamDijkstra.editarMatriz(0, IndexVec, Distancia);
-                    MatrizCamDijkstra.editarMatriz(1, IndexVec, IndexNodo);
-                    MatrizCamDijkstra.imprimirMatriz();
-                    verificarCaminos(Vecino);
-                }
+            if (Distancia < MatrizCamDijkstra.celda(0, IndexVec)) {
+                MatrizCamDijkstra.editarMatriz(0, IndexVec, Distancia);
+                MatrizCamDijkstra.editarMatriz(1, IndexVec, IndexNodo);
+                MatrizCamDijkstra.imprimirMatriz();
+                verificarCaminos(Vecino);
+            }
+        }
     }
 
-
     public ArrayList<Ciudad> buscarCaminoDijsktra(Ciudad IN, Ciudad FIN) {
-
-        Iteraciones = 0;
-
+        Mensaje = "";
         int Inicio = Ciudades.indexOf(IN);
         int Final = Ciudades.indexOf(FIN);
 
-        //INICIAR TABLA MATRIZ DIJKSTRA
+        // INICIAR TABLA MATRIZ DIJKSTRA
         MatrizCamDijkstra.borrarMatriz();
         MatrizCamDijkstra.editarMatriz(1, Ciudades.size() - 1, 0);
         MatrizCamDijkstra.rellenarColumna(0, Control.INF);
+        MatrizCamDijkstra.rellenarColumna(1, Control.NADIE);
         MatrizCamDijkstra.editarMatriz(0, Inicio, 0);
 
-        //BUSCAR CAMINOS MINIMOS
+        // BUSCAR CAMINOS MINIMOS
         verificarCaminos(Ciudades.get(Inicio));
 
-        //GENERAR CAMINO
+        // GENERAR CAMINO
         ArrayList<Ciudad> Cam = new ArrayList<Ciudad>();
         int Nodo = Final;
 
-        while (Nodo != Inicio) {
+        while (Nodo != Inicio && Nodo != Control.NADIE) {
             Cam.add(Ciudades.get(Nodo));
             Nodo = MatrizCamDijkstra.celda(1, Nodo);
         }
         Cam.add(Ciudades.get(Inicio));
 
-        return Cam;
+        if(Nodo == Control.NADIE){
+            Mensaje = "No existe un camino entre " + IN.Nombre + " y " + FIN.Nombre;
+            return null;
+        }else
+            return Cam;
     }
-
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        //MEJORAR RESOLUCION DE FORMAS
-        RenderingHints qualityHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // MEJORAR RESOLUCION DE FORMAS
+        RenderingHints qualityHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
         qualityHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        Graphics2D g2 = (Graphics2D)g.create();
+        Graphics2D g2 = (Graphics2D) g.create();
 
         g2.setRenderingHints(qualityHints);
         g2.setStroke(new BasicStroke(10));
+
+
+        if(!Mensaje.isBlank()){
+            g2.setColor(Control.ColNaranja);
+            g2.setFont(Control.TextoTab);
+            g2.drawString(Mensaje, 20, 50);
+        }
+
         g2.setColor(Color.lightGray);
         g2.setFont(Control.TextoCiudad);
 
-
-        if(Ciudades.isEmpty() && !Control.PanPrinc.PnNomCiu.Activo && Control.ESTADO != Control.ESTAGREGAR)
+        if (Ciudades.isEmpty() && !Control.PanPrinc.PnNomCiu.Activo && Control.ESTADO != Control.ESTAGREGAR)
             g2.drawString("Agrega una ciudad", 120, 350);
-
 
         // DIBUJAR CONEXIONES
         for (Ciudad ciu : Ciudades) {
@@ -211,9 +216,8 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
             }
         }
 
-
         // DIBUJAR CAMINO
-        if(Caminos != null){
+        if (Caminos != null) {
             int PuntosX[] = new int[Caminos.size()];
             int PuntosY[] = new int[Caminos.size()];
 
@@ -226,19 +230,17 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
             g2.setColor(Control.ColNaranja);
             g2.drawPolyline(PuntosX, PuntosY, Caminos.size());
         }
-    
 
-        //DIBUJAR SILUETA DE CIUDAD
-        if(Control.ESTADO == Control.ESTAGREGAR)
+        // DIBUJAR SILUETA DE CIUDAD
+        if (Control.ESTADO == Control.ESTAGREGAR)
             g2.drawImage(Control.ImCiudad, PosMouse.x, PosMouse.y, this);
     }
 
-
-    //          AGREGAR CIUDAD
+    // AGREGAR CIUDAD
     @Override
     public void mouseReleased(MouseEvent e) {
-            
-        if(Control.ESTADO == Control.ESTAGREGAR && !Control.PanPrinc.PnNomCiu.Activo){
+
+        if (Control.ESTADO == Control.ESTAGREGAR && !Control.PanPrinc.PnNomCiu.Activo) {
             Control.PanPrinc.PnNomCiu.X = e.getX();
             Control.PanPrinc.PnNomCiu.Y = e.getY();
             Control.PanPrinc.PnNomCiu._mover(new Point(650, 300));
@@ -249,21 +251,31 @@ public class PanelAreaTrabajo extends JPanel implements MouseInputListener {
 
     }
 
-    //      ACTUALIZAR POSICION DE SILUETA
+    // ACTUALIZAR POSICION DE SILUETA
     @Override
     public void mouseMoved(MouseEvent e) {
-        if(Control.ESTADO == Control.ESTAGREGAR && !Control.PanPrinc.PnNomCiu.Activo){
-            PosMouse = new Point(e.getXOnScreen() - Control.Ventana.getLocation().x - getLocation().x - Control.CiudadTam/2,
-                                 e.getYOnScreen() - Control.Ventana.getLocation().y - getLocation().y - Control.CiudadTam/2);
+        if (Control.ESTADO == Control.ESTAGREGAR && !Control.PanPrinc.PnNomCiu.Activo) {
+            PosMouse = new Point(
+                    e.getXOnScreen() - Control.Ventana.getLocation().x - getLocation().x - Control.CiudadTam / 2,
+                    e.getYOnScreen() - Control.Ventana.getLocation().y - getLocation().y - Control.CiudadTam / 2);
             System.out.print(PosMouse.x + ", ");
             System.out.println(PosMouse.y);
-            repaint();   
+            repaint();
         }
     }
 
-    public void mouseClicked(MouseEvent e) {}
-    public void mousePressed(MouseEvent e) {}
-    public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {}
-    public void mouseDragged(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    public void mousePressed(MouseEvent e) {
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseExited(MouseEvent e) {
+    }
+
+    public void mouseDragged(MouseEvent e) {
+    }
 }

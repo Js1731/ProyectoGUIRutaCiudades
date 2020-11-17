@@ -17,6 +17,7 @@ import java.awt.Font;
 public class Control {
 
     public static final int INF = 10000;
+    public static final int NADIE = 100001;
     public static final int CiudadTam = 113;
 
     public static Point VentTam = new Point(1100, 700);
@@ -26,11 +27,14 @@ public class Control {
     public static PanelAreaTrabajo AreaTrabajo;
     public static PanelPrincipal PanPrinc;
 
+    //ESTADP DEL EDITOR
     public static final int ESTNORMAL = 0;
     public static final int ESTCONECT = 1;
     public static final int ESTBORRAR = 2;
     public static final int ESTBUSCAR = 3;
     public static final int ESTAGREGAR = 4;
+
+    public static int ESTADO = ESTNORMAL;
 
     //FUENTES
     static public Color ColSel = new Color(255,102,0,255);
@@ -38,16 +42,16 @@ public class Control {
     static public Font FntTitulo = new Font("Arial Rounded MT Bold", Font.BOLD, 40);
     static public Font FntTituloTexto = new Font("Arial Rounded MT Bold", Font.PLAIN, 30);
     public static final Font TextoTab = new Font("Arial", Font.BOLD, 20);
+    public static final Font TextoTabla = new Font("Arial", Font.PLAIN, 15);
     public static final Font TextoCiudad = new Font("Arial", Font.BOLD, 40);
 
     public static final Color ColNaranja = new Color(203, 118, 53, 255);
     public static final Color ColMorado = new Color(110, 106, 164, 255);
 
-    public static int ESTADO = ESTNORMAL;
-
     public static Ciudad CiudadAux;
     public static Ciudad CiudadS;
 
+    //IMAGENES
     public static BufferedImage ImFondo;
     public static BufferedImage ImCiudad;
     public static BufferedImage ImCiudadSel;

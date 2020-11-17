@@ -114,7 +114,7 @@ public class PanelPrincipal extends JPanel{
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                cambiar_tab(PanelExpositor.MATADY, this);
+                cambiar_tab("MATADY", this);
             }
         };
         add(TabAdy);
@@ -124,7 +124,7 @@ public class PanelPrincipal extends JPanel{
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                cambiar_tab(PanelExpositor.MATDIS, this);
+                cambiar_tab("MATDIS", this);
             }
         };
         add(TabDis);
@@ -133,7 +133,7 @@ public class PanelPrincipal extends JPanel{
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                cambiar_tab(PanelExpositor.MATCAM, this);
+                cambiar_tab("MATCAM", this);
             }
         };
         add(TabCam);
@@ -150,28 +150,24 @@ public class PanelPrincipal extends JPanel{
         Control.Expositor._cambiar_matriz(TabIndex);
         
         TabAdy.Estado = TabAdy.EsNorm;
-        TabAdy.repaint();
         TabDis.Estado = Tab.EsNorm;
-        TabDis.repaint();
         TabCam.Estado = Tab.EsNorm;
-        TabCam.repaint();
 
         Tab.Estado = Tab.EstSel;
-        Tab.repaint();
+
+        Control.Ventana.repaint();
     }
 
     public void cambiar_Op(BtnCintaOp Tab){
-        
+
+        Control.AreaTrabajo.Mensaje = "";
+
         Agregar.Select = false;
-        Agregar.repaint();
         Conectar.Select = false;
-        Conectar.repaint();
         Borrar.Select = false;
-        Borrar.repaint();
         Buscar.Select = false;
-        Buscar.repaint();
         Normal.Select = false;
-        Normal.repaint();
+
 
         Tab.Select = true;
         Tab.repaint();

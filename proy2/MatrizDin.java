@@ -27,11 +27,15 @@ public class MatrizDin {
         Alto = alto;
     }
 
-    public void borrarMatriz(){
-        Valores.removeAll(Valores);
-        Alto = 0;
-        Ancho = 0;
+    public void imprimirMatriz(){
+        for (int h = 0; h < Alto; h++){
+            for(int w = 0; w < Ancho; w++)
+                System.out.print(Valores.get(h * Ancho + w) + " ");
+            System.out.println("");
+        }
+        System.out.println("");
     }
+
 
     public int celda(int posx, int posy){
         return Valores.get(posy * Ancho + posx);
@@ -51,7 +55,6 @@ public class MatrizDin {
                 this.agregarFila();
         }
             
-
         int posFin = posy * Ancho + posx;
         Valores.remove(posFin);
         Valores.add(posFin, dato);
@@ -85,14 +88,6 @@ public class MatrizDin {
         Alto --; 
     }
 
-    public void imprimirMatriz(){
-        for (int h = 0; h < Alto; h++){
-            for(int w = 0; w < Ancho; w++)
-                System.out.print(Valores.get(h * Ancho + w) + " ");
-            System.out.println("");
-        }
-        System.out.println("");
-    }
 
     public void rellenarFila(int pos, int dato){
         for (int j = 0; j < Ancho; j++) {
@@ -105,4 +100,11 @@ public class MatrizDin {
             this.editarMatriz(pos, j, dato);
         }
     }
+
+    public void borrarMatriz(){
+        Valores.removeAll(Valores);
+        Alto = 0;
+        Ancho = 0;
+    }
+
 }
